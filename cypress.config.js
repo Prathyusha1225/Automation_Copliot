@@ -1,12 +1,16 @@
 
-const { defineConfig } = require('cypress')
+const { defineConfig } = require('Cypress')
 const sqlServer = require('cypress-sql-server');
 
 module.exports = defineConfig({
+  reporter: 'cypress-mochawesome-reporter',
+
+  chromeWebSecurity: false,
+
   e2e: {
-    baseUrl: 'https://opensource-demo.orangehrmlive.com',
-  },
+
     setupNodeEvents(on, config) {
+      require('cypress-mochawesome-reporter/plugin')(on);
       config.db = {
         "userName": "rsa",
         "password": "Boon@123",
@@ -21,4 +25,6 @@ module.exports = defineConfig({
       on('task', tasks);
       return config;
     },
-  })
+    baseUrl: 'https://spcuat.rotary.org/',
+  }
+})

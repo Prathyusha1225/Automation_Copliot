@@ -1,28 +1,4 @@
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
 
 import loc from '../support/pageObjects/setup';
 
@@ -42,4 +18,44 @@ Cypress.Commands.add('dropdownSelect', (option) => {
           cy.wrap(role).click()
         }
       })
+})
+Cypress.Commands.add('getIframeElements', () => {
+  cy.frameLoaded('div[class="lema-cc-iframe-container"] iframe').then((iframe) => {
+    const body = iframe.contents().find('body')
+    cy.wrap(body) 
+  })
+})
+
+Cypress.Commands.add('getFooterElements', (links, domain) => {
+
+  cy.get('[class="rwc-footer__link-container"]').find(links)
+                   .invoke('removeAttr', 'target').click()
+  cy.url().should('contain', domain)
+  cy.go('back')
+
+})
+
+Cypress.Commands.add('getSocialFooterElements', (links, domain) => {
+
+  cy.get('[class="rwc-footer__molecule-link"]').find(links)
+                   .invoke('removeAttr', 'target').click()
+  cy.url().should('contain', domain)
+  cy.wait(2000)
+  cy.go('back')
+
+})
+
+Cypress.Commands.add('getProjectProfile', (projectID) => {
+  cy.get('button.rwc-header-menu__item a[href="/projects"]').click()
+        cy.url().should('contain', '/projects')
+        cy.window().then((win) => {
+            cy.stub(win, "open").callsFake((url, target) => {
+                return win.open.wrappedMethod.call(win, url, "_self");
+            })
+        });
+  cy.wait(5000)
+  cy.get(projectID).click();
+  cy.wait(7000)
+
+
 })

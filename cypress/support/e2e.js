@@ -15,8 +15,20 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands';
+import 'cypress-mochawesome-reporter/register';
 import sqlServer from 'cypress-sql-server';
 sqlServer.loadDBCommands();
+require ('cypress-iframe')
+
+module.exports = (on, config) => {
+    on("before:browser:launch", (browser = {}, args) => {
+      if (browser.name === "chrome") {
+        args.push("--disable-features=CrossSiteDocumentBlockingIfIsolating,CrossSiteDocumentBlockingAlways,IsolateOrigins,site-per-process");
+        args.push("--load-extension=cypress/extensions/Ignore-X-Frame-headers_v1.1");
+        return args;
+      }
+    });
+};
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
